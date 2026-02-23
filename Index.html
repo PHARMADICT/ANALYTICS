@@ -1,26 +1,4 @@
- (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a/css/animations.css b/css/animations.css
-new file mode 100644
-index 0000000000000000000000000000000000000000..2ad639d734cac8654ab9eb8c89e5fa00d6b0e2fa
---- /dev/null
-+++ b/css/animations.css
-@@ -0,0 +1,10 @@
-+/* Animation helpers */
-+@keyframes fadeInUp {
-+  from { opacity: 0; transform: translateY(6px); }
-+  to { opacity: 1; transform: translateY(0); }
-+}
-+
-+@keyframes pulseSoft {
-+  0%, 100% { transform: scale(1); }
-+  50% { transform: scale(1.02); }
-+}
-diff --git a/index.html b/index.html
-index 46e7ef8a54e226b2cef2fd2af5e0af56b8995486..132fee8856de2545cc6ab6eadadef53781f0581c 100644
---- a/index.html
-+++ b/index.html
-@@ -1,35 +1,42 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
  <html lang="en">
  <head>
    <meta charset="UTF-8">
