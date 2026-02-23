@@ -1,9 +1,208 @@
-N7
-No7 Analytics
-Dubai Airport T3 · Sales Platform
-Enter PIN
-
-Sign In →
-PIN: 1234
-
-🎯
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/css/animations.css b/css/animations.css
+new file mode 100644
+index 0000000000000000000000000000000000000000..2ad639d734cac8654ab9eb8c89e5fa00d6b0e2fa
+--- /dev/null
++++ b/css/animations.css
+@@ -0,0 +1,10 @@
++/* Animation helpers */
++@keyframes fadeInUp {
++  from { opacity: 0; transform: translateY(6px); }
++  to { opacity: 1; transform: translateY(0); }
++}
++
++@keyframes pulseSoft {
++  0%, 100% { transform: scale(1); }
++  50% { transform: scale(1.02); }
++}
+diff --git a/index.html b/index.html
+index 46e7ef8a54e226b2cef2fd2af5e0af56b8995486..132fee8856de2545cc6ab6eadadef53781f0581c 100644
+--- a/index.html
++++ b/index.html
+@@ -1,35 +1,42 @@
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+   <meta name="theme-color" content="#00c896">
+   <meta name="apple-mobile-web-app-capable" content="yes">
+   <meta name="apple-mobile-web-app-title" content="No7 Analytics">
+   <title>No7 · Sales Analytics</title>
+   <link rel="manifest" href="manifest.json">
++  <link rel="preconnect" href="https://fonts.googleapis.com">
++  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
++  <link rel="stylesheet" href="css/tokens.css">
++  <link rel="stylesheet" href="css/base.css">
++  <link rel="stylesheet" href="css/layout.css">
++  <link rel="stylesheet" href="css/components.css">
++  <link rel="stylesheet" href="css/animations.css">
+ </head>
+ <body>
+ 
+   <!-- ═══ LOGIN SCREEN ═══ -->
+   <div id="screen-login" class="screen active">
+     <div class="login-bg">
+       <div class="login-card">
+         <div class="login-logo">
+           <div class="logo-mark">N7</div>
+           <div class="login-logo-text">
+             <h1>No7 Analytics</h1>
+             <p>Dubai Airport T3 · Sales Platform</p>
+           </div>
+         </div>
+ 
+         <div class="alert alert-error" id="login-error" hidden></div>
+ 
+         <div class="field">
+           <label class="field-label" for="input-pin">Enter PIN</label>
+           <div class="field-input">
+             <input class="field-input" type="password" id="input-pin"
+               placeholder="····" maxlength="4" inputmode="numeric"
+               style="text-align:center;font-size:2rem;letter-spacing:.5em;height:64px">
+           </div>
+         </div>
+@@ -95,34 +102,32 @@
+         <span class="sync-dot" id="sync-dot"></span>
+         <span id="sync-text">Saved locally</span>
+       </div>
+ 
+       <!-- Views -->
+       <main class="view-container" id="view-container">
+         <div class="view" id="view-entry"></div>
+         <div class="view" id="view-analysis"></div>
+         <div class="view" id="view-staff"></div>
+         <div class="view" id="view-admin"></div>
+       </main>
+ 
+       <!-- Mobile bottom nav -->
+       <nav class="bottom-nav" id="bottom-nav"></nav>
+ 
+     </div>
+   </div>
+ 
+   <!-- Global UI -->
+   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+   <div class="success-overlay" id="success-overlay">
+     <div class="success-burst" id="success-burst">🎯</div>
+   </div>
+   <input type="file" id="camera-input" accept="image/*" capture="environment" hidden>
+ 
+-  <!-- Fonts + CDN -->
+-  <link rel="preconnect" href="https://fonts.googleapis.com">
+-  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
++  <!-- CDN -->
+   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+ 
+   <script type="module" src="js/app.js"></script>
+ </body>
+ </html>
+diff --git a/app.js b/js/app.js
+similarity index 80%
+rename from app.js
+rename to js/app.js
+index f5e4fc4abdd142920133b5c2b391e6d22eefcf6e..ea640ec7ae1830aa09414abf816706dceddc3409 100644
+--- a/app.js
++++ b/js/app.js
+@@ -180,73 +180,25 @@ function renderChecklistPanel() {
+     checklistOpen = false;
+     el('checklist-panel').classList.remove('open');
+   });
+ }
+ 
+ // ── KEYBOARD ──────────────────────────────────────────
+ let lastTabTime = 0;
+ function bindKeyboard() {
+   document.addEventListener('keydown', e => {
+     const tag = e.target.tagName;
+     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+     if (e.key === 'Tab') {
+       e.preventDefault();
+       const now = Date.now();
+       if (now - lastTabTime < 400) toggleChecklist();
+       lastTabTime = now;
+     }
+   });
+ }
+ 
+ // ── SVG ICONS ─────────────────────────────────────────
+ function icoEntry()    { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>`; }
+ function icoAnalysis() { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`; }
+ function icoStaff()    { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>`; }
+ function icoAdmin()    { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>`; }
+-('.chk-item').forEach(item => {
+-    item.addEventListener('click', () => {
+-      toggleChecklistItem(parseInt(item.dataset.idx));
+-      renderChecklistPanel();
+-    });
+-  });
+-
+-  el('btn-chk-confirm')?.addEventListener('click', () => {
+-    if (pct < 100) { toast('Complete all items first', 'error'); return; }
+-    confirmChecklist(store.auth.user);
+-    addAuditEntry('checklist_confirmed', `${total} items confirmed`, store.auth.user, store.auth.role);
+-    toast('✓ Checklist complete!', 'success');
+-    toggleChecklist();
+-  });
+-}
+-
+-// Subscribe to checklist changes to keep panel in sync
+-subscribe('checklist', () => { if (checklistOpen) renderChecklistPanel(); });
+-
+-// ── KEYBOARD SHORTCUTS ────────────────────────────────
+-let lastTabTime = 0;
+-function bindKeyboard() {
+-  document.addEventListener('keydown', e => {
+-    // Double-Tab → toggle checklist
+-    if (e.key === 'Tab' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+-      e.preventDefault();
+-      const now = Date.now();
+-      if (now - lastTabTime < 400) toggleChecklist();
+-      lastTabTime = now;
+-    }
+-    // Escape → close checklist
+-    if (e.key === 'Escape' && checklistOpen) toggleChecklist();
+-  });
+-}
+-
+-// ── NAV ICONS (inline SVG) ────────────────────────────
+-function iconEntry() {
+-  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>`;
+-}
+-function iconAnalysis() {
+-  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`;
+-}
+-function iconStaff() {
+-  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>`;
+-}
+-function iconAdmin() {
+-  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 00-14.14 0M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m0 18a9 9 0 01-9-9m9 9v-2m0-16v2m-7 5l1.41 1.41M19 5l-1.41 1.41M5 19l1.41-1.41M19 19l-1.41-1.41"/></svg>`;
+-}
+diff --git a/js/data/bp b/js/data/bp.js
+similarity index 100%
+rename from js/data/bp
+rename to js/data/bp.js
+diff --git a/js/services/auth b/js/services/auth.js
+similarity index 100%
+rename from js/services/auth
+rename to js/services/auth.js
+diff --git a/js/store/index b/js/store/index.js
+similarity index 100%
+rename from js/store/index
+rename to js/store/index.js
+diff --git a/js/utils/calc b/js/utils/calc.js
+similarity index 100%
+rename from js/utils/calc
+rename to js/utils/calc.js
+diff --git a/js/views/admin b/js/views/admin.js
+similarity index 100%
+rename from js/views/admin
+rename to js/views/admin.js
+diff --git a/js/views/analysis b/js/views/analysis.js
+similarity index 100%
+rename from js/views/analysis
+rename to js/views/analysis.js
+ 
+EOF
+)
