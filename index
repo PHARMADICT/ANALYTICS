@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KPI Dashboard – Alshaya Boots</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --boots-blue: #003B8E;
+    --boots-blue-dark: #002060;
+    --boots-blue-mid: #0054B4;
+    --boots-light: #E8F0FD;
+    --teal: #00B5BD;
+    --red-accent: #D42027;
+    --gold: #C8A84B;
+    --green: #1E8C45;
+    --red: #D42027;
+    --white: #FFFFFF;
+    --card-bg: rgba(255,255,255,0.97);
+  }
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+font-family: ‘DM Sans’, sans-serif;
+background: var(–boots-blue-dark);
+min-height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+overflow: hidden;
+}
+
+.bg-canvas {
+position: fixed;
+inset: 0;
+background:
+radial-gradient(ellipse 80% 60% at 20% 50%, rgba(0,84,180,0.6) 0%, transparent 60%),
+radial-gradient(ellipse 60% 80% at 80% 30%, rgba(0,181,189,0.15) 0%, transparent 50%),
+linear-gradient(135deg, #001540 0%, #002060 40%, #003B8E 100%);
+z-index: 0;
+}
+
+/* Watermark Boots No7 text */
+.watermark {
+position: fixed;
+right: -40px;
+top: 50%;
+transform: translateY(-50%);
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 320px;
+color: rgba(255,255,255,0.04);
+letter-spacing: -10px;
+line-height: 1;
+z-index: 0;
+pointer-events: none;
+user-select: none;
+}
+
+.watermark-left {
+position: fixed;
+left: -60px;
+bottom: -20px;
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 280px;
+color: rgba(255,255,255,0.03);
+z-index: 0;
+pointer-events: none;
+user-select: none;
+}
+
+/* Animated circles */
+.orb {
+position: fixed;
+border-radius: 50%;
+filter: blur(80px);
+z-index: 0;
+pointer-events: none;
+animation: orb-float 8s ease-in-out infinite;
+}
+.orb-1 {
+width: 400px; height: 400px;
+background: rgba(0,181,189,0.12);
+top: -100px; left: -100px;
+animation-delay: 0s;
+}
+.orb-2 {
+width: 300px; height: 300px;
+background: rgba(0,84,180,0.2);
+bottom: -80px; right: 100px;
+animation-delay: -3s;
+}
+
+@keyframes orb-float {
+0%, 100% { transform: translate(0, 0); }
+50% { transform: translate(30px, -20px); }
+}
+
+/* Main container */
+.dashboard {
+position: relative;
+z-index: 1;
+width: min(960px, 95vw);
+padding: 0;
+}
+
+/* Header */
+.header {
+text-align: center;
+padding: 32px 0 28px;
+animation: slide-down 0.7s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+.boots-badge {
+display: inline-flex;
+align-items: center;
+gap: 10px;
+background: rgba(255,255,255,0.08);
+border: 1px solid rgba(255,255,255,0.15);
+border-radius: 100px;
+padding: 6px 18px 6px 8px;
+margin-bottom: 20px;
+backdrop-filter: blur(10px);
+}
+
+.boots-logo {
+width: 36px; height: 36px;
+background: var(–white);
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 14px;
+color: var(–boots-blue);
+letter-spacing: 0.5px;
+}
+
+.boots-badge span {
+font-size: 13px;
+font-weight: 500;
+color: rgba(255,255,255,0.8);
+letter-spacing: 1.5px;
+text-transform: uppercase;
+}
+
+.header h1 {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: clamp(52px, 8vw, 76px);
+color: var(–white);
+letter-spacing: 4px;
+line-height: 0.95;
+margin-bottom: 8px;
+text-shadow: 0 2px 40px rgba(0,84,180,0.5);
+}
+
+.header-sub {
+font-size: 11px;
+font-weight: 500;
+letter-spacing: 4px;
+text-transform: uppercase;
+color: rgba(255,255,255,0.45);
+margin-top: 6px;
+}
+
+.week-badge {
+display: inline-block;
+margin-top: 12px;
+background: rgba(0,181,189,0.15);
+border: 1px solid rgba(0,181,189,0.3);
+color: var(–teal);
+font-size: 11px;
+font-weight: 600;
+letter-spacing: 2px;
+text-transform: uppercase;
+padding: 4px 14px;
+border-radius: 100px;
+}
+
+/* Grid */
+.kpi-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+grid-template-rows: auto auto;
+gap: 16px;
+padding: 0 0 32px;
+}
+
+.kpi-card {
+background: var(–card-bg);
+border-radius: 20px;
+padding: 28px 30px 24px;
+position: relative;
+overflow: hidden;
+box-shadow:
+0 24px 60px rgba(0,0,0,0.35),
+0 1px 0 rgba(255,255,255,0.8) inset;
+animation: card-rise 0.6s cubic-bezier(0.16,1,0.3,1) both;
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+cursor: default;
+}
+
+.kpi-card:hover {
+transform: translateY(-4px);
+box-shadow: 0 32px 80px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.8) inset;
+}
+
+.kpi-card::before {
+content: ‘’;
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 3px;
+border-radius: 20px 20px 0 0;
+}
+
+.card-aura::before { background: var(–teal); }
+.card-no7::before { background: var(–red-accent); }
+.card-ipc::before { background: var(–gold); }
+.card-conv::before { background: #7B5EA7; }
+.card-tbp::before { background: var(–boots-blue); }
+
+/* Bottom row — 3 cards */
+.kpi-grid .row-bottom {
+grid-column: 1 / -1;
+display: grid;
+grid-template-columns: 1fr 1fr 1fr;
+gap: 16px;
+}
+
+.card-label {
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 2.5px;
+text-transform: uppercase;
+color: #8896A8;
+margin-bottom: 16px;
+}
+
+.card-value {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 62px;
+color: var(–boots-blue-dark);
+line-height: 1;
+letter-spacing: 1px;
+margin-bottom: 12px;
+}
+
+.card-delta {
+display: inline-flex;
+align-items: center;
+gap: 5px;
+font-size: 14px;
+font-weight: 600;
+padding: 4px 12px;
+border-radius: 100px;
+}
+
+.delta-up {
+color: var(–green);
+background: rgba(30,140,69,0.1);
+}
+
+.delta-down {
+color: var(–red);
+background: rgba(212,32,39,0.1);
+}
+
+.delta-arrow {
+font-size: 10px;
+}
+
+/* Card decorative background number */
+.card-bg-num {
+position: absolute;
+right: 16px;
+bottom: -10px;
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 100px;
+color: rgba(0,59,142,0.05);
+line-height: 1;
+pointer-events: none;
+user-select: none;
+}
+
+/* Separator line under label */
+.label-line {
+position: absolute;
+top: 68px;
+left: 30px;
+width: 40px;
+height: 2px;
+border-radius: 2px;
+}
+
+.line-teal { background: var(–teal); }
+.line-red { background: var(–red-accent); }
+.line-gold { background: var(–gold); }
+.line-purple { background: #7B5EA7; }
+.line-blue { background: var(–boots-blue); }
+
+/* Animations */
+@keyframes slide-down {
+from { opacity: 0; transform: translateY(-30px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes card-rise {
+from { opacity: 0; transform: translateY(40px) scale(0.97); }
+to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.kpi-card:nth-child(1) { animation-delay: 0.15s; }
+.kpi-card:nth-child(2) { animation-delay: 0.22s; }
+.row-bottom .kpi-card:nth-child(1) { animation-delay: 0.30s; }
+.row-bottom .kpi-card:nth-child(2) { animation-delay: 0.37s; }
+.row-bottom .kpi-card:nth-child(3) { animation-delay: 0.44s; }
+
+/* Footer */
+.footer {
+text-align: center;
+padding-bottom: 24px;
+font-size: 11px;
+letter-spacing: 2px;
+color: rgba(255,255,255,0.2);
+text-transform: uppercase;
+animation: slide-down 1s 0.6s both;
+}
+
+/* Editable fields */
+[contenteditable] {
+outline: none;
+border-radius: 4px;
+cursor: text;
+transition: background 0.2s;
+}
+[contenteditable]:focus {
+background: rgba(0,84,180,0.08);
+padding: 0 4px;
+}
+
+/* Tooltip */
+.edit-hint {
+position: fixed;
+bottom: 20px;
+left: 50%;
+transform: translateX(-50%);
+background: rgba(255,255,255,0.1);
+backdrop-filter: blur(10px);
+border: 1px solid rgba(255,255,255,0.15);
+border-radius: 100px;
+padding: 8px 20px;
+font-size: 11px;
+color: rgba(255,255,255,0.5);
+letter-spacing: 1.5px;
+text-transform: uppercase;
+z-index: 10;
+animation: slide-down 1s 1s both;
+}
+</style>
+
+</head>
+<body>
+
+<div class="bg-canvas"></div>
+<div class="watermark">No7</div>
+<div class="watermark-left">Boots</div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="dashboard">
+  <div class="header">
+    <div class="boots-badge">
+      <div class="boots-logo">B</div>
+      <span>Alshaya – Boots</span>
+    </div>
+    <h1>KPI Dashboard</h1>
+    <div class="header-sub">Weekly Performance Summary</div>
+    <div class="week-badge" contenteditable>Week 11, 2025</div>
+  </div>
+
+  <div class="kpi-grid">
+    <!-- AURA -->
+    <div class="kpi-card card-aura">
+      <div class="label-line line-teal"></div>
+      <div class="card-label">AURA Linkage %</div>
+      <div class="card-value" contenteditable>12.4%</div>
+      <div class="card-delta delta-up">
+        <span class="delta-arrow">▲</span>
+        <span contenteditable>+1.2%</span>
+        <span style="opacity:0.5; font-size:11px; font-weight:400">vs LW</span>
+      </div>
+      <div class="card-bg-num">A</div>
+    </div>
+
+```
+<!-- NO7 -->
+<div class="kpi-card card-no7">
+  <div class="label-line line-red"></div>
+  <div class="card-label">No7 % Cont.</div>
+  <div class="card-value" contenteditable>12.4%</div>
+  <div class="card-delta delta-up">
+    <span class="delta-arrow">▲</span>
+    <span contenteditable>+1.2%</span>
+    <span style="opacity:0.5; font-size:11px; font-weight:400">vs LW</span>
+  </div>
+  <div class="card-bg-num">7</div>
+</div>
+
+<!-- Bottom row -->
+<div class="row-bottom">
+  <!-- IPC -->
+  <div class="kpi-card card-ipc">
+    <div class="label-line line-gold"></div>
+    <div class="card-label">IPC</div>
+    <div class="card-value" contenteditable>1.74</div>
+    <div class="card-delta delta-down">
+      <span class="delta-arrow">▼</span>
+      <span contenteditable>-0.4%</span>
+      <span style="opacity:0.5; font-size:11px; font-weight:400">vs LW</span>
+    </div>
+    <div class="card-bg-num">I</div>
+  </div>
+
+  <!-- CONV -->
+  <div class="kpi-card card-conv">
+    <div class="label-line line-purple"></div>
+    <div class="card-label">Conversion %</div>
+    <div class="card-value" contenteditable>78%</div>
+    <div class="card-delta delta-up">
+      <span class="delta-arrow">▲</span>
+      <span contenteditable>+0.5%</span>
+      <span style="opacity:0.5; font-size:11px; font-weight:400">vs LW</span>
+    </div>
+    <div class="card-bg-num">C</div>
+  </div>
+
+  <!-- TARGET BP -->
+  <div class="kpi-card card-tbp">
+    <div class="label-line line-blue"></div>
+    <div class="card-label">Target BP</div>
+    <div class="card-value" style="font-size:52px;" contenteditable>25,600</div>
+    <div style="margin-top:4px;">
+      <span style="font-size:12px; color:#8896A8; font-weight:500;">
+        Actual: <strong style="color:var(--boots-blue-dark);" contenteditable>23,035</strong>
+      </span>
+    </div>
+    <div class="card-bg-num">BP</div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <div class="footer">Alshaya Group · Boots Pharmacy · UAE Operations</div>
+</div>
+
+<div class="edit-hint">✏ Click any value to edit</div>
+
+<script>
+// Animate numbers on load
+document.querySelectorAll('.card-value').forEach(el => {
+  const text = el.textContent.trim();
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(10px)';
+  setTimeout(() => {
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+  }, 400);
+});
+
+// Hide edit hint after 4s
+setTimeout(() => {
+  const hint = document.querySelector('.edit-hint');
+  if (hint) hint.style.opacity = '0';
+}, 4000);
+</script>
+
+</body>
+</html>
